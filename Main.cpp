@@ -6,9 +6,26 @@ using namespace std;
 
 int main()
 {
-	String s1("happy");
-	String s2("birthday");
+	String s1;
+	String s2;
 	String s3;
+	
+	// ifstream constructor opens the file
+	ifstream inFile("String.txt", ios::in);
+
+	// exit program if ifstream could not open file
+	if (!inFile)
+	{
+		cout << "File could not be opened" << endl;
+		system("pause");
+		exit(1);
+	}
+
+	s1.load(inFile);
+	s2.load(inFile);
+
+	inFile.close();
+
 
 	// test overloaded equality and relational operators
 	cout << "s1 is \"" << s1 << "\"; s2 is \"" << s2
@@ -44,7 +61,7 @@ int main()
 	// test overloaded function call operator () for substring
 	cout << "The substring of s1 starting at\n"
 		<< "location 0 for 14 characters, s1(0, 14), is:\n"
-		<< s1(0, 14) << endl<<endl;
+		<< s1(0, 14) << endl << endl;
 
 	// test substring "to-end-of-String" option
 	cout << "The substring of s1 starting at\n"
@@ -59,9 +76,6 @@ int main()
 	cout << "assigning *s4Ptr to *s4Ptr" << endl;
 	*s4Ptr = *s4Ptr; // test overloaded assignment
 	cout << "*s4Ptr = " << *s4Ptr << endl;
-
-	// test destructor
-	delete s4Ptr;
 
 	// test using subscript operator to create a modifiable lvalue
 	s1[0] = 'H';

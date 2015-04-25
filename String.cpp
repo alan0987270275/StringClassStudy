@@ -1,45 +1,46 @@
-#include<iostream>
-#include<iomanip>
-#include<cstring>
-#include "String.h"
+// Fig. 11.10: String.cpp
+// String class member-function and friend-function definitions.
+#include <iostream>
+#include <iomanip>
+#include <cstring> // strcpy and strcat prototypes
+#include <cstdlib> // exit prototype
+#include "String.h" // String class definition
 using namespace std;
 
-String::String(const char *s)
-: length((s != 0) ? strlen(s) : 0)
+// conversion (and default) constructor converts char * to String
+String::String( const char *s ) 
+	:length( (s!=0) ? strlen(s) : 0)
 {
 	setString(s);
-}
+} 
 
-String::String(const String &copystring)
-: length(copystring.length)
+// copy constructor
+String::String( const String &copy ) 
+	:length(copy.length)
 {
-	setString(copystring.sPtr);
-}
+	setString(copy.sPtr);
+} 
 
+// Destructor
 String::~String()
 {
 	delete[]sPtr;
-}
+} 
 
+// utility function called by constructors and operator=
 void String::setString(const char *string2)
 {
 	sPtr = new char[length + 1];
-
 	if (string2 != 0)
-	{
-		for (int i = 0; i < length + 1; i++)
-		{
-			sPtr[i] = string2[i];
-		}
-	}
+		strcpy(sPtr, string2);
 	else
 		sPtr[0] = '\0';
-
 }
 
-const String &String:: operator=(const String & right)
+// overloaded = operator; avoids self assignment
+const String &String::operator=( const String &right )
 {
-	if (*this != right)
+	if (&right!=this)
 	{
 		delete[]sPtr;
 		length = right.length;
@@ -48,96 +49,103 @@ const String &String:: operator=(const String & right)
 	else
 		cout << "Error!" << endl;
 	return *this;
-}
+} 
 
-const String &String:: operator+=(const String &right)
+// concatenate right operand to this object and store in this object
+const String &String::operator+=( const String &right )
 {
 	int newlength = length + right.length;
-	char *tempsPtr = new char[newlength];
-	for (int i = 0; i < length; i++)
-		tempsPtr[i] = sPtr[i];
-	int j = 0;
-	for (int i = length; i < newlength; i++)
-	{
-		tempsPtr[i] = right.sPtr[j];
-		j++;
-	}
-
+	char *tempString = new char[newlength+1];
+	strcpy(tempString, sPtr);
+	strcpy(tempString + length,right.sPtr);
 	delete[]sPtr;
-	sPtr = new char[newlength];
-	for (int i = 0; i < newlength; i++)
-		sPtr[i] = tempsPtr[i];
+	sPtr = tempString;
 	length = newlength;
-	delete[]tempsPtr;
 	return *this;
-}
+} 
 
-bool String:: operator!() const
-{
-	return (length == 0);
-}
+// is this String empty?
+bool String::operator!() const
+{ 
+	return length == 0;
+} 
 
-bool String::operator==(const String &right) const
-{
-	return (strcmp(sPtr, right.sPtr) == 0);
-}
+// Is this String equal to right String?
+bool String::operator==( const String &right ) const
+{ 
+	return strcmp(sPtr, right.sPtr) == 0;
+} 
 
-bool String:: operator<(const String &right) const
-{
-	return (strcmp(sPtr, right.sPtr)<0);
-}
+// Is this String less than right String?
+bool String::operator<( const String &right ) const
+{ 
+	return strcmp(sPtr, right.sPtr) < 0;
+} 
 
-bool String:: operator>(const String &right) const
-{
-	return (strcmp(sPtr, right.sPtr)>0);
-}
 
-char &String:: operator[](int subcript)
+bool String::operator>(const String &right) const
 {
-	if (subcript<0 || subcript>length)
+	return strcmp(sPtr, right.sPtr) > 0;
+} 
+
+// return reference to character in String as a modifiable lvalue
+char &String::operator[]( int subscript )
+{
+	if (subscript < 0 || subscript >= length)
 		cout << "Error" << endl;
-	return sPtr[subcript];
-}
+	return sPtr[subscript];
+} 
 
-char String:: operator[](int subcript) const
+// return reference to character in String as rvalue
+char String::operator[]( int subscript ) const
 {
-	if (subcript<0 || subcript>length)
+	if (subscript < 0 || subscript >= length)
 		cout << "Error" << endl;
-	return sPtr[subcript];
-}
-String String:: operator()(int start, int sublength) const
+	return sPtr[subscript];
+} 
+
+// return a substring beginning at index and of length subLength
+String String::operator()( int index, int subLength ) const
 {
-	if (start<0 || sublength>-length || start + sublength > length)
+
+	if (subLength < 0 || index>=length || index < 0)
 		return "";
-	int newlength;
-	if (sublength == 0 || start + sublength > length)
-		newlength = length - start;
+
+	int newlength = 0;
+
+	if ((subLength == 0) || (index + subLength>length))
+		newlength = length - index;
 	else
-		newlength = sublength;
+		newlength = subLength;
+	
+	char *tempString = new char[newlength + 1];
+	strncpy(tempString, &sPtr[index],newlength);
+	tempString[newlength] = '\0';
+	String temp(tempString);
+	delete[]tempString;
+	return temp;
+} 
 
-	char *tempsPtr = new char[newlength + 1];
-	for (int i = start; i < newlength; i++)
-		tempsPtr[i] = sPtr[i];
-	tempsPtr[newlength] = '\0';
-	String convertstring(tempsPtr);
-	delete[]tempsPtr;
-	return convertstring;
-}
-int String::getLength() const
-{
+// return string length
+int String::getLength() const 
+{ 
 	return length;
-}
+} 
 
-ostream &operator<<(ostream &output, const String &s)
+// overloaded output operator
+ostream &operator<<( ostream &output, const String &s )
 {
 	output << s.sPtr;
 	return output;
-}
+} 
 
-istream &operator>>(istream &input, String &s)
+// overloaded input operator
+istream &operator>>( istream &input, String &s )
 {
-	char word[100];
-	input >> setw(100) >> word;
-	s = word;
+	char temp[100];
+	input >> setw(100) >> temp;
+	s = temp;
 	return input;
-}
+} 
+
+
