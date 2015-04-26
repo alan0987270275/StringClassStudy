@@ -6,26 +6,9 @@ using namespace std;
 
 int main()
 {
-	String s1;
-	String s2;
+	String s1("happy");
+	String s2(" birthday");
 	String s3;
-	
-	// ifstream constructor opens the file
-	ifstream inFile("String.txt", ios::in);
-
-	// exit program if ifstream could not open file
-	if (!inFile)
-	{
-		cout << "File could not be opened" << endl;
-		system("pause");
-		exit(1);
-	}
-
-	s1.load(inFile);
-	s2.load(inFile);
-
-	inFile.close();
-
 
 	// test overloaded equality and relational operators
 	cout << "s1 is \"" << s1 << "\"; s2 is \"" << s2
@@ -61,7 +44,7 @@ int main()
 	// test overloaded function call operator () for substring
 	cout << "The substring of s1 starting at\n"
 		<< "location 0 for 14 characters, s1(0, 14), is:\n"
-		<< s1(0, 14) << endl << endl;
+		<< s1(0, 14) << "\n\n";
 
 	// test substring "to-end-of-String" option
 	cout << "The substring of s1 starting at\n"
@@ -77,14 +60,28 @@ int main()
 	*s4Ptr = *s4Ptr; // test overloaded assignment
 	cout << "*s4Ptr = " << *s4Ptr << endl;
 
+	// test destructor
+	delete s4Ptr;
+
 	// test using subscript operator to create a modifiable lvalue
 	s1[0] = 'H';
 	s1[6] = 'B';
 	cout << "\ns1 after s1[0] = 'H' and s1[6] = 'B' is: "
 		<< s1 << "\n\n";
-
-
 	system("pause");
 } // end main
 
-
+/**************************************************************************
+* (C) Copyright 1992-2010 by Deitel & Associates, Inc. and               *
+* Pearson Education, Inc. All Rights Reserved.                           *
+*                                                                        *
+* DISCLAIMER: The authors and publisher of this book have used their     *
+* best efforts in preparing the book. These efforts include the          *
+* development, research, and testing of the theories and programs        *
+* to determine their effectiveness. The authors and publisher make       *
+* no warranty of any kind, expressed or implied, with regard to these    *
+* programs or to the documentation contained in these books. The authors *
+* and publisher shall not be liable in any event for incidental or       *
+* consequential damages in connection with, or arising out of, the       *
+* furnishing, performance, or use of these programs.                     *
+**************************************************************************/
